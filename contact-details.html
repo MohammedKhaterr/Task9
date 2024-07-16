@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Contact Details</title>
+    <script>
+        let editing = false;
+
+        function loadContact() {
+            const params = new URLSearchParams(window.location.search);
+            const index = params.get('index');
+            const contacts = JSON.parse(localStorage.getItem('contacts')) || [];
+            const contact = contacts[index];
+
+            if (contact) {
+                document.getElementById('name').innerText = contact.name;
+                document.getElementById('email').innerText = contact.email;
+                document.getElementById('phone').innerText = contact.phone;
+
+                // Store original values for comparison
+                document.getElementById('original-email').value = contact.email;
+                document.getElementById('original-phone').value = contact.phone;
+            } else {
+                alert('Contact not found!');
+                window.location.href = 'contact-list.html';
+            }
+        }
+
+        function toggleEdit() {
+            editing = !editing;
+            const emailField = document.getElementById('email');
+            const phoneField = document.getElementById('phone');
+            const editButton = document.getElementById('edit-button');
+            const saveButton = document.getElementById('save-button');
+
+            if (editing) {
+                emailField.contentEditable = true;
+                phoneField.contentEditable = true;
+                emailField.classList.add('editable');
+                phoneField.classList.add('editable');
+                editButton.style.display = 'none';
+                saveButton.style.display = 'inline';
+            } else {
+                emailField.contentEditable = false;
+                phoneField.contentEditable = false;
+                emailField.classList.remove('editable');
+                phoneField.classList.remove('editable');
+                editButton.style.display = 'inline';
+                saveButton.style.display = 'none';
+            }
+        }
+
+        function saveContact() {
+            const params = new URLSearchParams(window.location.search);
+            const index = params.get('index');
+            const contacts = JSON.parse(localStorage.getItem('contacts')) || [];
+            const updatedEmail = document.getElementById('email').innerText;
+            const updatedPhone = document.getElementById('phone').innerText;
+
+            contacts[index].email = updatedEmail;
+            contacts[index].phone = updatedPhone;
+            localStorage.setItem('contacts', JSON.stringify(contacts));
+            alert('Contact updated!');
+            toggleEdit(); // Switch back to view mode
+        }
+
+        window.onload = loadContact;
+    </script>
+    <style>
+        .editable {
+            border: 1px solid #ccc;
+            padding: 2px;
+        }
+    </style>
+</head>
+<body>
+    <img src="OIP.jpeg" alt="Logo" style="width: 100px; display: block; margin: 0 auto;">
+    <h2>Contact Details</h2>
+    <p><strong>Name:</strong> <span id="name"></span></p>
+    <p><strong>Email:</strong> <span id="email"></span></p>
+    <p><strong>Phone:</strong> <span id="phone"></span></p>
+    <button id="edit-button" onclick="toggleEdit()">Edit</button>
+    <button id="save-button" style="display: none;" onclick="saveContact()">Save</button>
+    <button onclick="window.location.href='contact-list.html'">Back to Contact List</button>
+    
+
+    
+</body>
+</html>
